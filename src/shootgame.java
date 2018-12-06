@@ -1,13 +1,22 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.Random;
 public class shootgame extends JFrame {
     private Container cp;
+    private  int count =0;
+
 
     private JLabel jlbBackground=new JLabel();  // background
     private JLabel jlbParachute_left=new JLabel(); // parachute_left
     private JLabel jlbParachute_right=new JLabel(); // parachute_right
     private JLabel jlbMissle=new JLabel(); // missle
+    private JLabel jlbsorceboard=new JLabel("記分板:");
+    private JLabel jlbsorce=new JLabel("0");
+    private boolean flag=false;
+    private Random rand = new Random();
+    private int x;
+    private int y;
 
     private  Timer t1;
     private  Timer t2;
@@ -37,12 +46,11 @@ public class shootgame extends JFrame {
         this.setBounds(0,0,1000,800);
         cp=this.getContentPane();
         cp.setLayout(null);
-
         Image img1=imgparachute1.getImage();
         Image img11=img1.getScaledInstance(120,180,Image.SCALE_AREA_AVERAGING);
         imgparachute1.setImage(img11);
         jlbParachute_left.setIcon(imgparachute1);
-        jlbParachute_left.setBounds(350,10,269,187);
+        jlbParachute_left.setBounds(550,-200,269,187);
         cp.add(jlbParachute_left);
 
         Image img2=imgparachute2.getImage();
@@ -54,7 +62,7 @@ public class shootgame extends JFrame {
         Image img33=img3.getScaledInstance(15,60,Image.SCALE_AREA_AVERAGING);
         jlbMissle.setIcon(missle);
         missle.setImage(img33);
-        jlbMissle.setBounds(350,750,30,60);
+        jlbMissle.setBounds(350,800,30,60);
         cp.add(jlbMissle);
 
         Image imgBack=Background.getImage();
@@ -62,66 +70,33 @@ public class shootgame extends JFrame {
         Background.setImage(imgBack);
         jlbBackground.setIcon(Background);
         jlbBackground.setBounds(0,650,1000,120);
-        cp.add( jlbBackground);
-
+        jlbsorceboard.setBounds(800,20,200,100);
+        jlbsorceboard.setFont(new Font("標楷體", Font.BOLD, 25));
+        jlbsorce.setBounds(900,20,200,100);
+        jlbsorce.setFont(new Font("標楷體", Font.BOLD, 25));
+        cp.add(jlbBackground);
+        cp.add(jlbsorceboard);
+        cp.add(jlbsorce);
         t1=new Timer(50, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 jlbMissle.setLocation(jlbMissle.getX(),jlbMissle.getY()-5);
-                if (jlbMissle.getY()<-60){
+                if (jlbMissle.getY()<-60&&jlbParachute_left.getY()>800){
                     t1.stop();
+                    flag=true;
                 }
             }
         });
         t2=new Timer(50, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jlbParachute_left.setLocation(jlbParachute_left.getX(),jlbParachute_left.getY()+2);
-                if (jlbParachute_left.getY()>700){
+                jlbParachute_left.setLocation(jlbParachute_left.getX(),jlbParachute_left.getY()+5);
+                if (jlbParachute_left.getY()>800&&jlbMissle.getY()<-60){
                     t2.stop();
+                    flag=true;
+                    count=count+20;
+                    jlbsorce.setText(Integer.toString(count));
                 }
-            }
-        });
-        jlbParachute_left.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                isobselect=true;
-                origX=e.getX();
-                origY=e.getY();
-                System.out.println("origX:"+origX+"origY:"+origY);
-            }
-        });
-        this.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)){
-                    targetX=e.getX();
-                    targetY=e.getY();
-                    System.out.println("origX:"+origX+"origY:"+origY);
-                    if (isobselect){
-                        jlbParachute_left.setLocation(targetX,targetY);
-                    }
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         this.addKeyListener(new KeyAdapter() {
@@ -133,26 +108,27 @@ public class shootgame extends JFrame {
                         jlbParachute_left.setIcon(imgparachute1);
                         jlbParachute_left.setLocation(jlbParachute_left.getX()-5,jlbParachute_left.getY());
                         break;
-                    case 38:  // up
-                        jlbParachute_left.setIcon(imgparachute2);
-                        jlbParachute_left.setLocation(jlbParachute_left.getX()-5,jlbParachute_left.getY()-5);
                     case 39: // right
                         jlbParachute_left.setIcon(imgparachute2);
                         jlbParachute_left.setLocation(jlbParachute_left.getX()+5,jlbParachute_left.getY());
                         break;
-                    case 40: // down
-                        jlbParachute_left.setIcon(imgparachute1);
-                        jlbParachute_left.setLocation(jlbParachute_left.getX(),jlbParachute_left.getY()+5);
-                        break;
-                    case 32: // space
-                        jlbMissle.setBounds(350,750,30,60);
-                        cp.add(jlbMissle);
+                    case 90: // z
                         t1.start();
                         t2.start();
+                        x=rand.nextInt(900)+1;
+                        y=rand.nextInt(900)+1;
+                        if (flag){
+                            jlbMissle.setBounds(x,800,30,60);
+                            jlbParachute_left.setBounds(y,-200,269,187);
+                            flag=false;
+                        }
                         break;
+                    case 82:
+
                 }
 
             }
         });
+
     }
 }
