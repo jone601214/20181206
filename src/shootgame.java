@@ -124,7 +124,11 @@ public class shootgame extends JFrame {
                         }
                         break;
                     case 82:
-
+                        jlbsorce.setText("0");
+                        jlbParachute_left.setBounds(550,-200,269,187);
+                        jlbMissle.setBounds(350,800,30,60);
+                        t1.stop();
+                        t2.stop();
                 }
 
             }
