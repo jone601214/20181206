@@ -97,6 +97,12 @@ public class shootgame extends JFrame {
                     count=count+20;
                     jlbsorce.setText(Integer.toString(count));
                 }
+                if (count>=40){
+                    JOptionPane.showMessageDialog(null,"遊戲結束");
+                    t1.stop();
+                    t2.stop();
+                    flag=false;
+                }
             }
         });
         this.addKeyListener(new KeyAdapter() {
@@ -127,6 +133,7 @@ public class shootgame extends JFrame {
                         jlbsorce.setText("0");
                         jlbParachute_left.setBounds(550,-200,269,187);
                         jlbMissle.setBounds(350,800,30,60);
+                        count=0;
                         t1.stop();
                         t2.stop();
                 }
